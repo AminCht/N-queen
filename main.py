@@ -42,11 +42,31 @@ def fitness_func(chrom):
             ii += 1
             jj -= 1
         i += 1
-    return bestfitness - (vertical_collision + diagonal_collision)
+    return int(bestfitness - (vertical_collision + diagonal_collision))
 
 
-def genetic(chromosomes):
+def genetic_algorithm(chromosomes):
+    fitness_of_chromosomes = []
+    chrom_dict = {}
+    for chrom in chromosomes:
+        fitness = fitness_func(chrom)
+        fitness_of_chromosomes.append(fitness)
+        chrom_dict.update({fitness: chrom})
 
+    for i in range(len(chromosomes)):
+        first_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
+        second_chromosome = selection(chrom_dict, int(sum(first_chromosome)))
+
+
+
+# using roulette wheel selection algorithm
+def selection(chrom_dict, sum_fitnesses):
+    random_select = random.randint(0, sum_fitnesses)
+    wheel = 0
+    for j, k in chrom_dict:
+        if wheel + j >= random_select:
+            return k
+        wheel += j
 
 
 def best_chromosome(chromosome):
@@ -63,11 +83,10 @@ if __name__ == '__main__':
             chromosomes = []
             for i in range(4):
                 chromosomes += [[random.randint(0, number_of_q - 1) for x in range(number_of_q)]]
-               # fitness = fitness_func(chromosomes[i])
+                # fitness = fitness_func(chromosomes[i])
                 if fitness_func(chromosomes[i]) == bestfitness:
                     best_chromosome(chromosomes[i])
                     best_chrom_found = True
             count += 1
         if not best_chrom_found:
-            chromosomes = genetic(chromosomes)
-
+            chromosomes = genetic_algorithm(chromosomes)
