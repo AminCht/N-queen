@@ -16,16 +16,15 @@ def fitness_func(chrom):
             else:
                 matrix[j].append('0')
         j += 1
-    print(matrix[1][2])
-    diagonal_collision= 0
+    diagonal_collision = 0
     j = 0
     i = 0
     for k in chrom:
         j = k
         ii = i
         jj = j
-        while (ii+1) in range(number_of_q)  and (jj+1) in range(number_of_q):
-            if matrix[i][j] == matrix[ii+1][jj+1]:
+        while (ii + 1) in range(number_of_q) and (jj + 1) in range(number_of_q):
+            if matrix[i][j] == matrix[ii + 1][jj + 1]:
                 diagonal_collision += 1
                 ii += 1
                 jj += 1
@@ -34,8 +33,8 @@ def fitness_func(chrom):
             jj += 1
         ii = i
         jj = j
-        while (ii+1) in range(number_of_q) and (jj-1) in range(number_of_q):
-            if matrix[i][j] == matrix[ii+1][jj-1]:
+        while (ii + 1) in range(number_of_q) and (jj - 1) in range(number_of_q):
+            if matrix[i][j] == matrix[ii + 1][jj - 1]:
                 diagonal_collision += 1
                 ii += 1
                 jj -= 1
@@ -46,18 +45,29 @@ def fitness_func(chrom):
     return bestfitness - (vertical_collision + diagonal_collision)
 
 
+def genetic(chromosomes):
 
 
+
+def best_chromosome(chromosome):
+    print(chromosome)
 
 
 if __name__ == '__main__':
     while True:
         number_of_q = int(input("Please insert number of queens:"))
+        bestfitness = (number_of_q * (number_of_q - 1)) / 2
+        best_chrom_found = False
         count = 0
         while count < 4:
             chromosomes = []
             for i in range(4):
                 chromosomes += [[random.randint(0, number_of_q - 1) for x in range(number_of_q)]]
-                fitness_func(chromosomes[i])
+               # fitness = fitness_func(chromosomes[i])
+                if fitness_func(chromosomes[i]) == bestfitness:
+                    best_chromosome(chromosomes[i])
+                    best_chrom_found = True
             count += 1
-        bestfitness = (number_of_q * (number_of_q - 1)) / 2
+        if not best_chrom_found:
+            chromosomes = genetic(chromosomes)
+
