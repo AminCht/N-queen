@@ -47,26 +47,54 @@ def fitness_func(chrom):
 
 def genetic_algorithm(chromosomes):
     fitness_of_chromosomes = []
-    chrom_dict = {}
+    chrom_dict = []
+    children_mutated = []
     for chrom in chromosomes:
         fitness = fitness_func(chrom)
         fitness_of_chromosomes.append(fitness)
-        chrom_dict.update({fitness: chrom})
-
-    for i in range(len(chromosomes)):
+        chrom_dict.append((fitness, chrom))
+    mutate_prob = 0.5
+    for j in range(len(chromosomes)):
         first_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
-        second_chromosome = selection(chrom_dict, int(sum(first_chromosome)))
+        second_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
+        children = crossover(first_chromosome, second_chromosome)
+        if random.randint(0, 1) >= mutate_prob:
+            children = mutation(children[random.randint(0, 2)])
+        children_mutated.append(children)
 
+        if bestfitness == fitness_func(children_mutated):
+            break
+    return
+
+
+def mutation(child):
+    place_of_gen = random.randint(0, len(child) - 1)
+    random_gen = random.randint(0, len(child) - 1)
+    child[place_of_gen] = random_gen
+    return child
 
 
 # using roulette wheel selection algorithm
 def selection(chrom_dict, sum_fitnesses):
     random_select = random.randint(0, sum_fitnesses)
     wheel = 0
-    for j, k in chrom_dict:
-        if wheel + j >= random_select:
-            return k
-        wheel += j
+    while wheel < random_select:
+        for j, k in chrom_dict:
+            if wheel + j >= random_select:
+                return k
+            wheel += j
+
+
+#
+def crossover(first_chrom, second_chrom):
+    for j in range(len(first_chrom)):
+        t = random.randint(0, 10)
+        x = first_chrom[j]
+        y = second_chrom[j]
+        if t < 5:
+            first_chrom[j] = y
+            second_chrom[j] = x
+    return [first_chrom] + [second_chrom]
 
 
 def best_chromosome(chromosome):
@@ -90,3 +118,4 @@ if __name__ == '__main__':
             count += 1
         if not best_chrom_found:
             chromosomes = genetic_algorithm(chromosomes)
+
