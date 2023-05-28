@@ -59,8 +59,7 @@ def genetic_algorithm(chromosomes):
         second_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
         children = crossover(first_chromosome, second_chromosome)
         if random.randint(0, 1) >= mutate_prob:
-            children = mutation(children[random.randint(0, 2)])
-        children_mutated.append(children)
+            children_mutated = mutation(children[random.randint(0, 2)])
 
         if bestfitness == fitness_func(children_mutated):
             break
@@ -72,6 +71,8 @@ def mutation(child):
     random_gen = random.randint(0, len(child) - 1)
     child[place_of_gen] = random_gen
     return child
+
+
 
 
 # using roulette wheel selection algorithm
@@ -97,6 +98,7 @@ def crossover(first_chrom, second_chrom):
     return [first_chrom] + [second_chrom]
 
 
+
 def best_chromosome(chromosome):
     print(chromosome)
 
@@ -118,4 +120,5 @@ if __name__ == '__main__':
             count += 1
         if not best_chrom_found:
             chromosomes = genetic_algorithm(chromosomes)
+            break
 
