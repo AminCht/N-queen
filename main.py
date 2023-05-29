@@ -53,12 +53,12 @@ def genetic_algorithm(chromosomes):
         fitness = fitness_func(chrom)
         fitness_of_chromosomes.append(fitness)
         chrom_dict.append((fitness, chrom))
-    mutate_prob = 0.5
+    mutate_prob = 5
     for j in range(len(chromosomes)):
         first_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
         second_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
         children += (crossover(first_chromosome, second_chromosome))
-        if random.uniform(0, 1) >= mutate_prob:
+        if random.randint(0, 10) > mutate_prob:
             children.append(mutation(children[len(children) - 1]))
 
     return children
@@ -85,10 +85,10 @@ def selection(chrom_dict, sum_fitnesses):
 #
 def crossover(first_chrom, second_chrom):
     for k in range(len(first_chrom)):
-        t = random.randint(0, 1)
+        t = random.randint(0, 10)
         x = first_chrom[k]
         y = second_chrom[k]
-        if t < 0.5:
+        if t <= 5:
             first_chrom[k] = y
             second_chrom[k] = x
     return [first_chrom] + [second_chrom]
