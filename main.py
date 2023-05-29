@@ -48,7 +48,7 @@ def fitness_func(chrom):
 def genetic_algorithm(chromosomes):
     fitness_of_chromosomes = []
     chrom_dict = []
-    children_mutated = []
+    children = []
     for chrom in chromosomes:
         fitness = fitness_func(chrom)
         fitness_of_chromosomes.append(fitness)
@@ -57,9 +57,9 @@ def genetic_algorithm(chromosomes):
     for j in range(len(chromosomes)):
         first_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
         second_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
-        children = crossover(first_chromosome, second_chromosome)
+        children += (crossover(first_chromosome, second_chromosome))
         if random.uniform(0, 1) >= mutate_prob:
-            children = mutation(children)
+            children.append(mutation(children[len(children)-1]))
 
 #        if bestfitness in [fitness_func(chrom) for chrom in children]:
     return children
@@ -87,22 +87,22 @@ def selection(chrom_dict, sum_fitnesses):
 
 #
 def crossover(first_chrom, second_chrom):
-    c = [0] * len(first_chrom)
-    for j in range(len(first_chrom)):
-        r = random.randint(0, 1)
-        if r < 0.5:
-            c[j] = first_chrom[j]
-        else:
-            c[j] = second_chrom[i]
-    return c
+    # c = [0] * len(first_chrom)
     # for j in range(len(first_chrom)):
-    #     t = random.randint(0, 1)
-    #     x = first_chrom[j]
-    #     y = second_chrom[j]
-    #     if t < 0.5:
-    #         first_chrom[j] = y
-    #         second_chrom[j] = x
-    # return [first_chrom] + [second_chrom]
+    #     r = random.randint(0, 1)
+    #     if r < 0.5:
+    #         c[j] = first_chrom[j]
+    #     else:
+    #         c[j] = second_chrom[i]
+    # return c
+    for k in range(len(first_chrom)):
+        t = random.randint(0, 1)
+        x = first_chrom[k]
+        y = second_chrom[k]
+        if t < 0.5:
+            first_chrom[k] = y
+            second_chrom[k] = x
+    return [first_chrom] + [second_chrom]
 
 
 
@@ -112,23 +112,31 @@ def best_chromosome(chromosome):
 
 
 if __name__ == '__main__':
+    number_of_q = int(input("Please insert number of queens:"))
     while True:
-        number_of_q = int(input("Please insert number of queens:"))
+
         bestfitness = (number_of_q * (number_of_q - 1)) / 2
         best_chrom_found = False
         count = 0
         chromosomes = []
-        while count < 100:
+        while count < 4 and not best_chrom_found:
 
             for i in range(4):
                 chromosomes += [[random.randint(0, number_of_q - 1) for x in range(number_of_q)]]
                 # fitness = fitness_func(chromosomes[i])
                 if fitness_func(chromosomes[i]) == bestfitness:
-                    best_chromosome(chromosomes[i])
+                    #best_chromosome(chromosomes[i])
                     best_chrom_found = True
             count += 1
         if not best_chrom_found:
-            chromosomes = genetic_algorithm(chromosomes)
-            print("best is:")
-            print(chromosomes)
+                chromosomes = genetic_algorithm(chromosomes)
+                # if bestfitness in [fitness_func(child) for child in chromosomes]:
 
+                # print(chromosomes[
+                #     indexOf()
+                #       ])
+                for h in chromosomes:
+                    if bestfitness == fitness_func(h):
+                        print('anwer is: ')
+                        print(h)
+                        break
