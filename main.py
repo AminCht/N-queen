@@ -142,7 +142,7 @@ if __name__ == '__main__':
         sq_size = height / dimension
         best_fitness = (number_of_q * (number_of_q - 1)) / 2
         best_chromosome_found = False
-        while (finish == False):
+        while not finish:
             count = 0
             chromosomes = []
             while count < 4 and not best_chromosome_found:
