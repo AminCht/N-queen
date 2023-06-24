@@ -3,19 +3,19 @@ import random
 import pygame as game
 
 dimension = None
-width = None
-height = None
+width = 512
+height = 512
 sq_size = None
 
 
-def fitness_func(chrom):
+def fitness_func(chromosome):
     vertical_collision = 0
-    for m in chrom:
-        vertical_collision += chrom.count(m) - 1
+    for m in chromosome:
+        vertical_collision += chromosome.count(m) - 1
     vertical_collision /= 2
     matrix = []
     j = 0
-    for i in chrom:
+    for i in chromosome:
         matrix.append([])
         for k in range(number_of_q):
             if k == i:
@@ -26,7 +26,7 @@ def fitness_func(chrom):
     diagonal_collision = 0
     j = 0
     i = 0
-    for k in chrom:
+    for k in chromosome:
         j = k
         ii = i
         jj = j
@@ -49,21 +49,21 @@ def fitness_func(chrom):
             ii += 1
             jj -= 1
         i += 1
-    return int(bestfitness - (vertical_collision + diagonal_collision))
+    return int(best_fitness - (vertical_collision + diagonal_collision))
 
 
 def genetic_algorithm(chromosomes):
     fitness_of_chromosomes = []
-    chrom_dict = []
+    chromosome_dict = []
     children = []
-    for chrom in chromosomes:
-        fitness = fitness_func(chrom)
+    for chromosome in chromosomes:
+        fitness = fitness_func(chromosome)
         fitness_of_chromosomes.append(fitness)
-        chrom_dict.append((fitness, chrom))
+        chromosome_dict.append((fitness, chromosome))
     mutate_prob = 5
     for j in range(len(chromosomes)):
-        first_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
-        second_chromosome = selection(chrom_dict, int(sum(fitness_of_chromosomes)))
+        first_chromosome = selection(chromosome_dict, int(sum(fitness_of_chromosomes)))
+        second_chromosome = selection(chromosome_dict, int(sum(fitness_of_chromosomes)))
         children += (crossover(first_chromosome, second_chromosome))
         if random.randint(0, 10) > mutate_prob:
             children.append(mutation(children[len(children) - 1]))
@@ -79,30 +79,45 @@ def mutation(child):
 
 
 # using roulette wheel selection algorithm
-def selection(chrom_dict, sum_fitnesses):
-    random_select = random.randint(1, sum_fitnesses)
+def selection(chromosome_dict, sum_fitness):
+    random_select = random.randint(1, sum_fitness)
     wheel = 0
     while wheel < random_select:
-        for j, k in chrom_dict:
+        for j, k in chromosome_dict:
             if wheel + j >= random_select:
                 return k
             wheel += j
 
 
 #
-def crossover(first_chrom, second_chrom):
-    for k in range(len(first_chrom)):
+def crossover(first_chromosome, second_chromosome):
+    for k in range(len(first_chromosome)):
         t = random.randint(0, 10)
-        x = first_chrom[k]
-        y = second_chrom[k]
+        x = first_chromosome[k]
+        y = second_chromosome[k]
         if t <= 5:
-            first_chrom[k] = y
-            second_chrom[k] = x
-    return [first_chrom] + [second_chrom]
+            first_chromosome[k] = y
+            second_chromosome[k] = x
+    return [first_chromosome] + [second_chromosome]
 
 
 def best_chromosome(chromosome):
+    print('answer is: ')
     print(chromosome)
+
+    game.init()
+    game.display.set_caption('N-queen')
+    screen = game.display.set_mode((512, 512))
+    screen.fill(game.Color('white'))
+    running = True
+    draw_board(screen)
+    draw_pieces(screen, chromosome)
+    game.display.flip()
+    while running:
+        for e in game.event.get():
+            if e.type == game.QUIT:
+                running = False
+                game.quit()
 
 
 def draw_board(screen):
@@ -124,41 +139,28 @@ if __name__ == '__main__':
         finish = False
         number_of_q = int(input("Please insert number of queens:"))
         dimension = number_of_q
-        width = height = 512
         sq_size = height / dimension
-        game.init()
-        game.display.set_caption('N-queen')
-        screen = game.display.set_mode((512, 512))
-        screen.fill(game.Color('white'))
+        best_fitness = (number_of_q * (number_of_q - 1)) / 2
+        best_chromosome_found = False
         while (finish == False):
-            bestfitness = (number_of_q * (number_of_q - 1)) / 2
-            best_chrom_found = False
             count = 0
             chromosomes = []
-            while count < 4 and not best_chrom_found:
+            while count < 4 and not best_chromosome_found:
 
                 for i in range(4):
                     chromosomes += [[random.randint(0, number_of_q - 1) for x in range(number_of_q)]]
-                    # fitness = fitness_func(chromosomes[i])
-                    # if fitness_func(chromosomes[i]) == bestfitness:
-                    #     #best_chromosome(chromosomes[i])
-                    #     best_chrom_found = True
+                    fitness = fitness_func(chromosomes[i])
+                    if fitness_func(chromosomes[i]) == best_fitness:
+                        best_chromosome(chromosomes[i])
+                        best_chromosome_found = True
+                        finish = True
+                        break
                     count += 1
-            if not best_chrom_found:
+            if not best_chromosome_found:
                 chromosomes = genetic_algorithm(chromosomes)
 
                 for h in chromosomes:
-                    if bestfitness == fitness_func(h):
-                        print('answer is: ')
-                        print(h)
-                        running = True
-                        draw_board(screen)
-                        draw_pieces(screen, h)
-                        game.display.flip()
-                        while running:
-                            for e in game.event.get():
-                                if e.type == game.QUIT:
-                                    running = False
-                                    game.quit()
+                    if best_fitness == fitness_func(h):
+                        best_chromosome(h)
                         finish = True
                         break
