@@ -7,6 +7,6 @@ Persian:
 
 English:
 
-This is our Academic Project For Artificial Intelligence (N queen problem)
+This is our Academic Project For Artificial Intelligence (N queen problem) using Python programming language.
 wWe solved it using Genetic Algorithm also we used roulette wheel for selection,swap for crossover and random mutation.
 merged branch is for showing result in console and main branch for showing with graphics.
